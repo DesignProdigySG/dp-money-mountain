@@ -1,0 +1,32 @@
+{
+  "clusters": [
+    {
+      "id": "value_fleet",
+      "label": "Value fleet / price-led (< S$2,000)",
+      "strategicRole": "deprioritize",
+      "rationale": "Could serve some standard-fleet needs, but the lowest-price battle is not where this brand's differentiation is strongest — treat as a tactical/legacy zone, not a target battlefield, even where it looks like a large pool.",
+      "competitorNote": "Entry-level SKUs from mainstream OEMs and generic ODM fleet deals compete almost entirely on price here."
+    },
+    {
+      "id": "core_corporate",
+      "label": "Core corporate-business (S$2,000–S$2,999)",
+      "strategicRole": "primary",
+      "rationale": "Likely bulk business-fleet territory for mainstream knowledge workers — the primary hypothesis for where real, repeatable fleet volume sits.",
+      "competitorNote": "Mainstream enterprise fleet lines (ThinkPad, EliteBook/ProBook, Latitude-class) are the direct competitive set."
+    },
+    {
+      "id": "premium_mobile",
+      "label": "Premium Mobile (S$3,000–S$3,999)",
+      "strategicRole": "secondary",
+      "rationale": "A real but role-based opportunity inside the same target accounts (senior/mobile users), not the whole fleet — treat as an upsell layer on top of the core-corporate hypothesis, not a separate target.",
+      "competitorNote": "Premium-ultraportable executive lines compete here on weight and build quality."
+    },
+    {
+      "id": "specialist_workstation",
+      "label": "Specialist / workstation (S$4,000+)",
+      "strategicRole": "deprioritize",
+      "rationale": "Selective executive/specialist demand only, and often requires workstation-class discrete GPU — a hard product exclusion for the current range.",
+      "competitorNote": "Dedicated workstation lines (Precision, ZBook, ThinkPad P-series) own this segment."
+    }
+  ]
+}

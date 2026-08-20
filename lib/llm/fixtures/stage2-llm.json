@@ -1,0 +1,49 @@
+{
+  "topDown": {
+    "benchmark": {
+      "value": 350000,
+      "status": "modeled",
+      "confidence": "low",
+      "sourceUrl": "https://sbr.com.sg/markets/news/cotd-singapore-pc-market-declines-77-yoy-in-q2-2024",
+      "sourceNote": "IDC-reported Singapore traditional-PC shipments (216,000 in Q2 2024, annualized to ~864,000) combined with global commercial-PC share (~54%) and notebook share (~75%) proxies, rounded to ~350,000. Not an IDC-reported commercial-laptop figure — reality-check only, not ground truth."
+    },
+    "basisNote": "Top-down benchmark is a rough anchor from IDC Singapore PC shipment data plus non-Singapore commercial/notebook share proxies; the bottom-up build below is calculated independently and reconciled against it."
+  },
+  "bottomUpRows": [
+    {
+      "scaleValueId": "lt25",
+      "accounts": { "value": 337700, "status": "sourced", "sourceUrl": "https://www.mom.gov.sg/newsroom/parliament-questions-and-replies/2026/0303-written-answer-to-pq-on-distribution-of-smes", "sourceNote": "MOM parliamentary reply, 2024: 337,700 SMEs employed fewer than 25 workers." },
+      "avgUnitsPerAccount": { "value": 4, "status": "assumed", "sourceNote": "Deliberately low working mean reflecting a highly skewed micro-enterprise population; no official mean is published for this band." },
+      "penetration": { "value": 0.4, "status": "assumed", "sourceNote": "Working assumption for laptop penetration of employees; not source-stated." },
+      "cycleYears": { "value": 4, "status": "assumed", "sourceNote": "Working replacement-cycle assumption, annualized for market sizing (not literal per-company refresh timing)." }
+    },
+    {
+      "scaleValueId": "b25_49",
+      "accounts": { "value": 10900, "status": "sourced", "sourceUrl": "https://www.mom.gov.sg/newsroom/parliament-questions-and-replies/2026/0303-written-answer-to-pq-on-distribution-of-smes", "sourceNote": "MOM parliamentary reply, 2024: 10,900 SMEs employed 25–49 workers." },
+      "avgUnitsPerAccount": { "value": 37, "status": "assumed" },
+      "penetration": { "value": 0.4, "status": "assumed" },
+      "cycleYears": { "value": 4, "status": "assumed" }
+    },
+    {
+      "scaleValueId": "b50_199",
+      "accounts": { "value": 8000, "status": "sourced", "sourceUrl": "https://www.mom.gov.sg/newsroom/parliament-questions-and-replies/2026/0303-written-answer-to-pq-on-distribution-of-smes", "sourceNote": "MOM: 5,400 (50–99) + 1,800 (100–149) + 800 (150–199) = 8,000." },
+      "avgUnitsPerAccount": { "value": 96.25, "status": "assumed" },
+      "penetration": { "value": 0.4, "status": "assumed" },
+      "cycleYears": { "value": 4, "status": "assumed" }
+    },
+    {
+      "scaleValueId": "b200_1999",
+      "accounts": { "value": 1523, "status": "modeled", "sourceUrl": "https://www.apollo.io/companies", "sourceNote": "Apollo employee-size filtering, working estimate — no clean official Singapore 200–1,999 series found." },
+      "avgUnitsPerAccount": { "value": 300, "status": "assumed" },
+      "penetration": { "value": 0.4, "status": "assumed" },
+      "cycleYears": { "value": 4, "status": "assumed" }
+    },
+    {
+      "scaleValueId": "b2000plus",
+      "accounts": { "value": 375, "status": "modeled", "sourceUrl": "https://www.apollo.io/companies", "sourceNote": "Apollo employee-size filtering, working estimate — no official Singapore 2,000+ enterprise-count series found." },
+      "avgUnitsPerAccount": { "value": 2050, "status": "assumed" },
+      "penetration": { "value": 0.4, "status": "assumed" },
+      "cycleYears": { "value": 4, "status": "assumed" }
+    }
+  ]
+}

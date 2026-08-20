@@ -1,0 +1,104 @@
+{
+  "segments": [
+    {
+      "scaleValueId": "b50_199", "profileValueId": "prof_services", "fitClusterId": "core_corporate", "tier": "top", "priority": 1,
+      "modeledAccounts": 1135, "fleetScaleProxy": "Medium fleet", "intensity": "high",
+      "dominantNeed": "Mainstream & standard",
+      "fitHypothesis": "Strong for mainstream/mobile; engineering/design pockets may require unsupported GPU.",
+      "whyAttractive": "Strong laptop intensity and professional mobility; the largest modeled 50–199 pool among high-laptop-intensity target hypotheses.",
+      "mainRisk": "Professional Services is broad; architecture/engineering pockets may require GPU/workstation devices.",
+      "nextFieldQuestion": "How are standard laptops vs mobile/premium laptops split in a typical 50–199 employee professional-services firm, and how many units are normally bought at refresh?"
+    },
+    {
+      "scaleValueId": "b200_1999", "profileValueId": "prof_services", "fitClusterId": "core_corporate", "tier": "top", "priority": 2,
+      "modeledAccounts": 148, "fleetScaleProxy": "Large fleet", "intensity": "high",
+      "dominantNeed": "Mainstream & standard",
+      "fitHypothesis": "Strong for mainstream/mobile; engineering/design pockets may require unsupported GPU.",
+      "whyAttractive": "Strong laptop intensity and professional mobility; specialist sub-sectors need separate treatment.",
+      "mainRisk": "Larger-account procurement and incumbent frameworks may make entry harder despite strong fit.",
+      "nextFieldQuestion": "For larger professional-services firms, what is the standard fleet model, refresh event size and incumbent supplier/channel?"
+    },
+    {
+      "scaleValueId": "b50_199", "profileValueId": "finance_insurance", "fitClusterId": "core_corporate", "tier": "top", "priority": 3,
+      "modeledAccounts": 567, "fleetScaleProxy": "Medium fleet", "intensity": "high",
+      "dominantNeed": "Mainstream & standard",
+      "fitHypothesis": "Strong product fit subject to enterprise security/manageability validation.",
+      "whyAttractive": "High laptop intensity, standardised enterprise fleets and mobile executive/client roles can make this commercially attractive.",
+      "mainRisk": "Enterprise security/manageability and support readiness still need confirmation.",
+      "nextFieldQuestion": "What security/manageability requirements are mandatory, and what laptop price/spec tier is standard for most employees?"
+    },
+    {
+      "scaleValueId": "b50_199", "profileValueId": "infocomm", "fitClusterId": "core_corporate", "tier": "top", "priority": 4,
+      "modeledAccounts": 923, "fleetScaleProxy": "Medium fleet", "intensity": "high",
+      "dominantNeed": "Performance",
+      "fitHypothesis": "Strong for CPU/RAM-heavy work and mobile roles; weaker for CUDA/NVIDIA/workstation needs.",
+      "whyAttractive": "High laptop relevance and high-spec demand, but a portion of technical users may require discrete GPU/workstation capability.",
+      "mainRisk": "Technical user mix may create meaningful GPU exclusions.",
+      "nextFieldQuestion": "What share of the normal corporate fleet can use integrated graphics versus needing NVIDIA/workstation-class devices?"
+    },
+    {
+      "scaleValueId": "b50_199", "profileValueId": "real_estate", "fitClusterId": "premium_mobile", "tier": "top", "priority": 5,
+      "modeledAccounts": 197, "fleetScaleProxy": "Medium fleet", "intensity": "medium",
+      "dominantNeed": "Ultraportable",
+      "fitHypothesis": "Mobility/weight positioning is a natural strength here.",
+      "whyAttractive": "Mobility is commercially relevant, a distinctive niche even though the modeled pool is smaller.",
+      "mainRisk": "Smaller modeled account pool and potentially fragmented purchasing across agencies.",
+      "nextFieldQuestion": "Do sales/leasing/property-management teams value lightweight premium laptops enough to pay above basic fleet pricing?"
+    },
+    {
+      "scaleValueId": "b200_1999", "profileValueId": "finance_insurance", "fitClusterId": "core_corporate", "tier": "watchlist",
+      "modeledAccounts": 125, "fleetScaleProxy": "Large fleet", "intensity": "high",
+      "dominantNeed": "Mainstream & standard",
+      "fitHypothesis": "Strong product fit subject to enterprise security/manageability validation.",
+      "whyAttractive": "High laptop intensity, standardised enterprise fleets and mobile executive/client roles can make this commercially attractive.",
+      "mainRisk": "High enterprise-readiness bar and incumbent-vendor friction.",
+      "nextFieldQuestion": "How difficult is vendor onboarding / approved-model entry, and what is a realistic first order size?"
+    },
+    {
+      "scaleValueId": "b200_1999", "profileValueId": "infocomm", "fitClusterId": "core_corporate", "tier": "watchlist",
+      "modeledAccounts": 180, "fleetScaleProxy": "Large fleet", "intensity": "high",
+      "dominantNeed": "Performance",
+      "fitHypothesis": "Strong for CPU/RAM-heavy work and mobile roles; weaker for CUDA/NVIDIA/workstation needs.",
+      "whyAttractive": "High laptop relevance and high-spec demand at larger fleet scale.",
+      "mainRisk": "GPU/workstation exclusions plus sophisticated IT requirements.",
+      "nextFieldQuestion": "Which employee groups are mainstream/mobile versus GPU/workstation-heavy, and can we enter as a tier rather than whole-fleet replacement?"
+    },
+    {
+      "scaleValueId": "b50_199", "profileValueId": "wholesale_trade", "fitClusterId": "core_corporate", "tier": "watchlist",
+      "modeledAccounts": 411, "fleetScaleProxy": "Medium fleet", "intensity": "medium",
+      "dominantNeed": "Mainstream & standard",
+      "fitHypothesis": "Strong for mainstream + mobile profiles.",
+      "whyAttractive": "Good combination of office work and mobile commercial roles; larger firms may support standardised fleets.",
+      "mainRisk": "Fit looks good but differentiation may be weaker than in mobility-heavy sectors.",
+      "nextFieldQuestion": "How standardised are laptop fleets for sales/operations teams, and is mobility a real purchase driver?"
+    },
+    {
+      "scaleValueId": "b200_1999", "profileValueId": "education", "fitClusterId": "core_corporate", "tier": "watchlist",
+      "modeledAccounts": 530, "fleetScaleProxy": "Large fleet", "intensity": "high",
+      "dominantNeed": "Mainstream & standard",
+      "fitHypothesis": "Potential fit; operational readiness and procurement route are critical.",
+      "whyAttractive": "Potentially substantial standardised fleets.",
+      "mainRisk": "Modeled row; institutional procurement can be slow/structured, and government institutions are excluded from this data.",
+      "nextFieldQuestion": "How much of this pool is private versus government-linked education, and what procurement/tender rules apply?"
+    },
+    {
+      "scaleValueId": "b50_199", "profileValueId": "admin_support", "fitClusterId": "core_corporate", "tier": "trap",
+      "modeledAccounts": 933, "fleetScaleProxy": "Medium fleet", "intensity": "low",
+      "dominantNeed": "Mainstream & standard",
+      "fitHypothesis": "Selective fit in the office/admin population only.",
+      "whyAttractive": "Large modeled 50–199 / 200–1,999 pools make this look attractive at a glance.",
+      "mainRisk": "Sector includes labour-intensive/frontline services (security, cleaning, employment services); employee count can materially overstate laptop users.",
+      "nextFieldQuestion": "What share of headcount in this band is genuinely desk-based office/admin versus frontline labour?"
+    },
+    {
+      "scaleValueId": "b50_199", "profileValueId": "retail_trade", "fitClusterId": "value_fleet", "tier": "trap",
+      "modeledAccounts": 338, "fleetScaleProxy": "Medium fleet", "intensity": "low",
+      "dominantNeed": "Mainstream & standard",
+      "fitHypothesis": "Better for HQ/management fleet than the whole workforce.",
+      "whyAttractive": "Large number of businesses and some sizeable chains.",
+      "mainRisk": "Store/frontline staff typically use POS/mobile devices rather than laptops; price sensitivity is high.",
+      "nextFieldQuestion": "How many laptop-using HQ/merchandising/management roles exist per typical mid-size retail account?"
+    }
+  ],
+  "winnabilityCrossCheck": "Cross-checked against an alternate 'winnability' framing (ease of entry x differentiation): both approaches converge on 50–199-employee accounts as the most attractive direct-entry band, with Professional Services and Finance & Insurance as the strongest industry overlaps."
+}
