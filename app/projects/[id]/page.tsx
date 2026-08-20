@@ -4,7 +4,7 @@ import { STAGE_ORDER } from "@/lib/pipeline/stage-registry";
 
 export default async function ProjectRootPage({ params }: PageProps<"/projects/[id]">) {
   const { id } = await params;
-  const project = getProject(id);
+  const project = await getProject(id);
   if (!project) notFound();
 
   if (project.payload.stage7) {

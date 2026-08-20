@@ -6,9 +6,9 @@ import { ProjectPayload } from "../schema/payload";
 describe("full pipeline (mock LLM — no ANTHROPIC_API_KEY in this environment)", () => {
   let projectId: string;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     expect(process.env.ANTHROPIC_API_KEY).toBeUndefined();
-    const project = createProject({
+    const project = await createProject({
       category: "Enterprise laptops",
       geography: "Singapore",
       brand: "VAIO",
@@ -38,8 +38,8 @@ describe("full pipeline (mock LLM — no ANTHROPIC_API_KEY in this environment)"
     const { db } = await import("../db/client");
     const { projects } = await import("../db/schema");
     const { eq } = await import("drizzle-orm");
-    const row = db.select().from(projects).where(eq(projects.id, projectId)).get()!;
-    let payload = ProjectPayload.parse(JSON.parse(row.payload));
+    const rows = await db.select().from(projects).where(eq(projects.id, projectId));
+    let payload = ProjectPayload.parse(rows[0].payload);
 
     expect(isStageStale(payload, "stage2")).toBe(false);
 
@@ -61,7 +61,7 @@ describe("full pipeline (mock LLM — no ANTHROPIC_API_KEY in this environment)"
   });
 
   it("reports downstream stages as not generatable until their dependencies exist", async () => {
-    const fresh = createProject({ category: "Widgets", geography: "Malaysia", brand: "Acme" });
+    const fresh = await createProject({ category: "Widgets", geography: "Malaysia", brand: "Acme" });
     expect(canGenerateStage(fresh.payload, "stage1")).toBe(true);
     expect(canGenerateStage(fresh.payload, "stage2")).toBe(false);
     expect(canGenerateStage(fresh.payload, "stage6")).toBe(false);

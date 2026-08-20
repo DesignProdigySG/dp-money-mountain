@@ -4,7 +4,7 @@ import { createProject, listProjects } from "@/lib/db/repo";
 import { ProjectIntake } from "@/lib/schema/payload";
 
 export async function GET() {
-  return NextResponse.json(listProjects());
+  return NextResponse.json(await listProjects());
 }
 
 const CreateBody = z.object({
@@ -18,6 +18,6 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.message }, { status: 400 });
   }
-  const project = createProject(parsed.data.intake, parsed.data.name);
+  const project = await createProject(parsed.data.intake, parsed.data.name);
   return NextResponse.json(project, { status: 201 });
 }

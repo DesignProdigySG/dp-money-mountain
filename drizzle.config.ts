@@ -1,10 +1,13 @@
 import { defineConfig } from "drizzle-kit";
 
+// Used only for `drizzle-kit introspect`/`studio`-style tooling during
+// development. Actual schema changes go through Supabase directly (see
+// lib/db/client.ts) — this is not wired into any app startup path.
 export default defineConfig({
   schema: "./lib/db/schema.ts",
   out: "./drizzle",
-  dialect: "sqlite",
+  dialect: "postgresql",
   dbCredentials: {
-    url: process.env.MONEY_MOUNTAIN_DB_PATH ?? "./data/money-mountain.db",
+    url: process.env.DATABASE_URL ?? "",
   },
 });

@@ -14,7 +14,7 @@ function fmt(n: number) {
 
 export default async function BattlefieldPage({ params }: PageProps<"/projects/[id]/battlefield">) {
   const { id } = await params;
-  const project = getProject(id);
+  const project = await getProject(id);
   if (!project) notFound();
 
   const { payload } = project;

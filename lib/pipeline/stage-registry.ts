@@ -42,7 +42,7 @@ export class StageDependencyError extends Error {}
 
 export async function runStage(projectId: string, stageId: StageId) {
   const stage = STAGES[stageId];
-  const project = getProject(projectId);
+  const project = await getProject(projectId);
   if (!project) throw new Error(`Project ${projectId} not found`);
 
   const input = stage.buildInput(project.payload);
@@ -59,7 +59,7 @@ export async function runStage(projectId: string, stageId: StageId) {
     output = await stage.run(input, client);
     stage.outputSchema.parse(output);
   } catch (err) {
-    recordStageRun({
+    await recordStageRun({
       projectId,
       stageId,
       inputHash,
@@ -72,7 +72,7 @@ export async function runStage(projectId: string, stageId: StageId) {
     throw err;
   }
 
-  recordStageRun({
+  await recordStageRun({
     projectId,
     stageId,
     inputHash,
@@ -82,7 +82,7 @@ export async function runStage(projectId: string, stageId: StageId) {
     status: "success",
   });
 
-  const updated = updateProjectPayload(projectId, (payload) => {
+  const updated = await updateProjectPayload(projectId, (payload) => {
     const merged = stage.merge(payload, output);
     return {
       ...merged,

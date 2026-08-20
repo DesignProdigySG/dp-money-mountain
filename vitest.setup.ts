@@ -1,10 +1,10 @@
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-
-// Isolated temp sqlite DB per test-file module registry, set before any
-// lib/db/client.ts import (which reads this env var at module load time).
-if (!process.env.MONEY_MOUNTAIN_DB_PATH) {
-  const dir = mkdtempSync(join(tmpdir(), "money-mountain-test-"));
-  process.env.MONEY_MOUNTAIN_DB_PATH = join(dir, "test.db");
+// Tests run against the isolated `money_mountain_test` schema in the same
+// Supabase Postgres database — never the real `money_mountain` schema.
+// Requires DATABASE_URL to be set (see .env.example).
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    "DATABASE_URL is not set. Tests need a Postgres connection string (see .env.example) — " +
+      "they run against the isolated `money_mountain_test` schema, not your real data.",
+  );
 }
+process.env.MONEY_MOUNTAIN_DB_SCHEMA = "money_mountain_test";

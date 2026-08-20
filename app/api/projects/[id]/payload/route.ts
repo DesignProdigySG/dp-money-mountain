@@ -43,7 +43,7 @@ export async function PATCH(request: NextRequest, ctx: RouteContext<"/api/projec
   }
 
   try {
-    const updated = updateProjectPayload(id, (payload) => ({
+    const updated = await updateProjectPayload(id, (payload) => ({
       ...payload,
       [parsed.data.field]: valueParsed.data,
     }));

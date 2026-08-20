@@ -9,7 +9,7 @@ import { createProject, listProjects } from "../lib/db/repo";
 import { runStage, STAGE_ORDER } from "../lib/pipeline/stage-registry";
 
 async function main() {
-  const existing = listProjects().find(
+  const existing = (await listProjects()).find(
     (p) => p.category === "Enterprise laptops" && p.geography === "Singapore" && p.brand === "VAIO",
   );
   if (existing) {
@@ -17,7 +17,7 @@ async function main() {
     return;
   }
 
-  const project = createProject(
+  const project = await createProject(
     {
       category: "Enterprise laptops",
       geography: "Singapore",
@@ -37,7 +37,9 @@ async function main() {
   console.log(`\nDone. Visit /projects/${project.id}/battlefield once the dev server is running.`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+main()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });

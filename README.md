@@ -16,12 +16,19 @@ Every number is tagged **sourced** / **modeled** / **assumed** with a source not
 
 ## Running locally
 
+Storage is Postgres via Supabase (the app's tables live in a dedicated `money_mountain` schema, separate from any other app sharing that project). You need a `DATABASE_URL`:
+
 ```bash
+cp .env.example .env.local
+# edit .env.local, set DATABASE_URL to the Supabase connection string
+# (Project Settings -> Database -> Connection string -> "Transaction pooler")
 npm install
 npm run dev
 ```
 
 Open http://localhost:3000.
+
+Schema changes are applied directly against Supabase (via the Supabase MCP tools or dashboard/CLI), not through a drizzle-kit migrator baked into app startup — `lib/db/schema.ts` describes the current shape, but changing it means applying the matching SQL against both the `money_mountain` and `money_mountain_test` schemas yourself.
 
 ### Mock mode vs. live mode
 
@@ -50,7 +57,7 @@ Creates the VAIO / Enterprise laptops / Singapore project through the normal int
 npm test
 ```
 
-Covers: Zod schema validation, the IPF matrix-fill algorithm, the DB repo layer, and a full 7-stage pipeline run end-to-end against the mock LLM client.
+Covers: Zod schema validation, the IPF matrix-fill algorithm, the DB repo layer, and a full 7-stage pipeline run end-to-end against the mock LLM client. Tests run against the isolated `money_mountain_test` schema in the same Supabase database — never `money_mountain` — so they don't touch real project data. Requires `DATABASE_URL` to be set (same as running the app).
 
 ## Known MVP simplifications
 
@@ -63,7 +70,7 @@ Covers: Zod schema validation, the IPF matrix-fill algorithm, the DB repo layer,
 ## Project structure
 
 - `lib/schema/` — Zod schemas; the source of truth for every stage's shape, including the sourced/modeled/assumed tagging primitive (`common.ts`).
-- `lib/db/` — Drizzle + better-sqlite3. `schema.ts` (tables), `client.ts` (connection + migrations), `repo.ts` (CRUD).
+- `lib/db/` — Drizzle + Postgres (Supabase). `schema.ts` (tables, in the `money_mountain` schema), `client.ts` (connection), `repo.ts` (CRUD, all async).
 - `lib/pipeline/` — the stage graph. `types.ts` (stage contract), `stage-registry.ts` (registry + `runStage`/`isStageStale`), `ipf.ts` (deterministic matrix fill), `stages/*.ts` (one module per stage).
 - `lib/llm/` — `client.ts` (the `LlmClient` interface), `mock-client.ts` / `anthropic-client.ts` (implementations), `factory.ts` (graceful fallback), `fixtures/*.json` (the VAIO mock data).
 - `app/` — Next.js App Router pages and API routes.

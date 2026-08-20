@@ -1,6 +1,12 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { pgSchema, text, integer, jsonb, timestamp } from "drizzle-orm/pg-core";
 
-export const projects = sqliteTable("projects", {
+// Schema name is env-driven so the same table defs serve the real
+// `money_mountain` schema and the isolated `money_mountain_test` schema
+// used by the test suite, both living in the shared Supabase project.
+const schemaName = process.env.MONEY_MOUNTAIN_DB_SCHEMA ?? "money_mountain";
+const mm = pgSchema(schemaName);
+
+export const projects = mm.table("projects", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   category: text("category").notNull(),
@@ -9,20 +15,20 @@ export const projects = sqliteTable("projects", {
   status: text("status").notNull().default("draft"),
   createdBy: text("created_by").notNull().default("local-user"),
   schemaVersion: integer("schema_version").notNull().default(1),
-  payload: text("payload").notNull(),
-  createdAt: text("created_at").notNull(),
-  updatedAt: text("updated_at").notNull(),
+  payload: jsonb("payload").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const stageRuns = sqliteTable("stage_runs", {
+export const stageRuns = mm.table("stage_runs", {
   id: text("id").primaryKey(),
   projectId: text("project_id").notNull(),
   stageId: text("stage_id").notNull(),
   inputHash: text("input_hash").notNull(),
-  input: text("input").notNull(),
-  output: text("output"),
+  input: jsonb("input").notNull(),
+  output: jsonb("output"),
   model: text("model"),
   status: text("status").notNull(),
   error: text("error"),
-  createdAt: text("created_at").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

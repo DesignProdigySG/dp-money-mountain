@@ -3,12 +3,12 @@ import { connection } from "next/server";
 import { listProjects } from "@/lib/db/repo";
 
 export default async function HomePage() {
-  // better-sqlite3 is synchronous, so without this Next.js would treat the
-  // read as build-time-constant and prerender/cache it — connection() opts
-  // the page into per-request rendering. No-op in `next dev` (always
-  // on-demand there) but load-bearing for `next build && next start`.
+  // Next.js has no visibility into a raw Postgres query the way it does
+  // fetch() — connection() guarantees this page is never prerendered/cached
+  // and always reflects the current project list. No-op in `next dev`
+  // (always on-demand there) but load-bearing for `next build && next start`.
   await connection();
-  const projects = listProjects();
+  const projects = await listProjects();
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">

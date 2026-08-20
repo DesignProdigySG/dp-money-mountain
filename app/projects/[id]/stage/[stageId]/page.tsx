@@ -20,7 +20,7 @@ export default async function StagePage({ params }: PageProps<"/projects/[id]/st
   const stageId = rawStageId as StageId;
   if (stageId === "stage7") redirect(`/projects/${id}/battlefield`);
 
-  const project = getProject(id);
+  const project = await getProject(id);
   if (!project) notFound();
 
   const { payload } = project;

@@ -11,5 +11,5 @@ export async function GET(
   if (!stageIdParsed.success) {
     return NextResponse.json({ error: "Unknown stage id" }, { status: 400 });
   }
-  return NextResponse.json(listStageRuns(id, stageIdParsed.data));
+  return NextResponse.json(await listStageRuns(id, stageIdParsed.data));
 }
