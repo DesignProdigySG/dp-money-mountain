@@ -1,0 +1,59 @@
+{
+  "needsFramework": [
+    {
+      "id": "mainstream_standard",
+      "name": "Mainstream and standard laptops",
+      "typicalUsers": "General staff, administrative personnel, operations, finance/accounting and legal teams.",
+      "requirements": "Balance cost and performance for general-purpose workloads — SaaS, browsers, collaboration platforms, office suites and endpoint-security agents still create real CPU/memory/network load.",
+      "productFit": "Strong — mainstream business-tier configurations for standard business use, with larger-screen options where productivity benefits from it.",
+      "hardExclusions": "None obvious for general-purpose Windows workloads; exact enterprise management/support requirements still need validation.",
+      "source": { "value": "TechTarget enterprise laptop categories guide", "status": "sourced", "sourceUrl": "https://www.techtarget.com/enterprise-software/tip/How-to-find-the-best-laptops-for-enterprise-software-workloads" }
+    },
+    {
+      "id": "ultraportable",
+      "name": "Ultraportable laptops",
+      "typicalUsers": "Executives, sales teams, field managers, marketing teams and other frequent travellers.",
+      "requirements": "Reduced weight and long battery life are the defining needs, alongside standard enterprise security/manageability.",
+      "productFit": "Very strong — lightweight premium positioning is directly relevant to mobile/client-facing roles.",
+      "hardExclusions": "If a buyer requires a specific unsupported form factor or platform, validate before including in Product SAM.",
+      "source": { "value": "TechTarget enterprise laptop categories guide", "status": "sourced", "sourceUrl": "https://www.techtarget.com/enterprise-software/tip/How-to-find-the-best-laptops-for-enterprise-software-workloads" }
+    },
+    {
+      "id": "performance",
+      "name": "Performance laptops",
+      "typicalUsers": "Software developers, engineers, data scientists, AI/ML specialists, product designers and other power users.",
+      "requirements": "High-end CPU/GPU capability, large RAM, strong thermal control; virtualization and local AI materially increase resource requirements.",
+      "productFit": "Partial/strong — higher-spec non-workstation configurations can serve CPU/RAM-heavy workloads.",
+      "hardExclusions": "Discrete NVIDIA/CUDA, professional GPU, or workstation-certified requirement is a hard exclusion for VAIO's current range.",
+      "source": { "value": "TechTarget enterprise laptop categories guide", "status": "sourced", "sourceUrl": "https://www.techtarget.com/enterprise-software/tip/How-to-find-the-best-laptops-for-enterprise-software-workloads" }
+    },
+    {
+      "id": "security_compliance",
+      "name": "Security and compliance-focused laptops",
+      "typicalUsers": "Government, healthcare, finance, legal, cybersecurity/IT admin, executives and other stricter-security roles.",
+      "requirements": "Locked-down firmware, enhanced encryption, longer support cycles and enterprise security features (TPM/secure boot/biometrics).",
+      "productFit": "Potential fit, not assumed — needs validation of security features, firmware lifecycle, remote manageability and local warranty/support.",
+      "hardExclusions": "Any mandatory enterprise security/manageability capability the brand cannot meet becomes a SAM exclusion.",
+      "source": { "value": "TechTarget enterprise laptop categories guide", "status": "sourced", "sourceUrl": "https://www.techtarget.com/enterprise-software/tip/How-to-find-the-best-laptops-for-enterprise-software-workloads" }
+    },
+    {
+      "id": "specialized_app",
+      "name": "Specialized / mission-critical application requirement",
+      "typicalUsers": "Users of custom enterprise applications, certified software, specialized peripherals or platform-specific tools.",
+      "requirements": "Hardware must satisfy the specific software's processor/platform, driver, peripheral and certification requirements.",
+      "productFit": "Case-by-case — map the exact application requirement to the closest configuration.",
+      "hardExclusions": "Unsupported processor/platform certification, specialist peripheral requirement, or discrete workstation GPU can exclude the brand.",
+      "source": { "value": "TechTarget enterprise laptop categories guide", "status": "sourced", "sourceUrl": "https://www.techtarget.com/enterprise-software/tip/How-to-find-the-best-laptops-for-enterprise-software-workloads" }
+    }
+  ],
+  "profileMappings": [
+    { "profileValueId": "prof_services", "workloadProfile": "Legal, accounting, consulting, advertising, architecture/engineering and other knowledge work.", "dominantNeedCategoryId": "mainstream_standard", "intensity": "high", "secondaryNeed": "Ultraportable; performance for architecture/engineering/data-heavy roles.", "confidence": "high" },
+    { "profileValueId": "finance_insurance", "workloadProfile": "Analytical, office, client-facing, regulatory/compliance and management workforce.", "dominantNeedCategoryId": "mainstream_standard", "intensity": "high", "secondaryNeed": "Ultraportable + security/compliance-focused.", "confidence": "high" },
+    { "profileValueId": "infocomm", "workloadProfile": "Software, IT, product, data, technical, commercial and corporate knowledge work.", "dominantNeedCategoryId": "performance", "intensity": "high", "secondaryNeed": "Ultraportable + mainstream for business/management roles.", "confidence": "high" },
+    { "profileValueId": "real_estate", "workloadProfile": "Sales/leasing, property management, corporate/admin and mobile client-facing work.", "dominantNeedCategoryId": "ultraportable", "intensity": "medium", "secondaryNeed": "Mainstream & standard.", "confidence": "medium" },
+    { "profileValueId": "wholesale_trade", "workloadProfile": "Sales, trading, operations, finance, logistics coordination and corporate functions.", "dominantNeedCategoryId": "mainstream_standard", "intensity": "medium", "secondaryNeed": "Ultraportable for sales/client-facing/mobile roles.", "confidence": "medium" },
+    { "profileValueId": "education", "workloadProfile": "Teaching, administrative, professional and knowledge-work roles with structured IT environments.", "dominantNeedCategoryId": "mainstream_standard", "intensity": "high", "secondaryNeed": "Security/compliance-focused; ultraportable for mobile/leadership roles.", "confidence": "medium" },
+    { "profileValueId": "admin_support", "workloadProfile": "Office administration and employment services mixed with security, cleaning and other labour-intensive services.", "dominantNeedCategoryId": "mainstream_standard", "intensity": "low", "secondaryNeed": "Limited ultraportable need for managers/recruiters/client-facing roles.", "confidence": "medium" },
+    { "profileValueId": "retail_trade", "workloadProfile": "Frontline/store workforce plus HQ, merchandising, finance, marketing and management.", "dominantNeedCategoryId": "mainstream_standard", "intensity": "low", "secondaryNeed": "Ultraportable for managers/buyers; many frontline roles may not need laptops at all.", "confidence": "medium" }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "framing": {
+    "commercialQuestion": "Is enterprise laptops in Singapore worth VAIO pursuing, and which segment gives the best chance of a defensible margin?",
+    "narrative": "VAIO Singapore is exploring enterprise laptops as a go-to-market category. Before committing sales effort, we need a numerical view of where real bulk demand sits — not just a qualitative read — and explicit assumptions wherever public data is incomplete."
+  },
+  "dimensionPlan": {
+    "scaleDimension": {
+      "id": "employee_size",
+      "name": "Employee size band",
+      "description": "Proxy for fleet/deal scale — how many laptops a single account could plausibly buy.",
+      "values": [
+        { "id": "lt25", "label": "<25", "order": 1 },
+        { "id": "b25_49", "label": "25–49", "order": 2 },
+        { "id": "b50_199", "label": "50–199", "order": 3 },
+        { "id": "b200_1999", "label": "200–1,999", "order": 4 },
+        { "id": "b2000plus", "label": "2,000+", "order": 5 }
+      ],
+      "source": {
+        "value": "MOM parliamentary reply on SME size distribution + Apollo employee-size filtering for the two largest bands",
+        "status": "sourced",
+        "sourceUrl": "https://www.mom.gov.sg/newsroom/parliament-questions-and-replies/2026/0303-written-answer-to-pq-on-distribution-of-smes"
+      }
+    },
+    "profileDimension": {
+      "id": "industry",
+      "name": "Industry",
+      "description": "Used only to infer the dominant workforce/workload profile and therefore likely laptop need — not a direct headcount-to-laptop translation.",
+      "values": [
+        { "id": "prof_services", "label": "Professional Services", "order": 1 },
+        { "id": "finance_insurance", "label": "Finance & Insurance", "order": 2 },
+        { "id": "infocomm", "label": "Information & Communications", "order": 3 },
+        { "id": "real_estate", "label": "Real Estate", "order": 4 },
+        { "id": "wholesale_trade", "label": "Wholesale Trade", "order": 5 },
+        { "id": "education", "label": "Education", "order": 6 },
+        { "id": "admin_support", "label": "Administrative & Support Services", "order": 7 },
+        { "id": "retail_trade", "label": "Retail Trade", "order": 8 }
+      ],
+      "source": {
+        "value": "SingStat 2024 services industry statistics (Public Administration excluded from source)",
+        "status": "sourced",
+        "sourceUrl": "https://data.gov.sg/datasets/d_a99730f2ed37e5dd4dba9d6a779fdc9f/view"
+      }
+    },
+    "fitFilterDimension": {
+      "id": "price_cluster",
+      "name": "Laptop price cluster",
+      "description": "A positive/negative filter against VAIO's product line, not additive market size.",
+      "values": [
+        { "id": "value_fleet", "label": "Value fleet / price-led (< S$2,000)", "order": 1 },
+        { "id": "core_corporate", "label": "Core corporate-business (S$2,000–S$2,999)", "order": 2 },
+        { "id": "premium_mobile", "label": "Premium Mobile (S$3,000–S$3,999)", "order": 3 },
+        { "id": "specialist_workstation", "label": "Specialist / workstation (S$4,000+)", "order": 4 }
+      ]
+    }
+  }
+}

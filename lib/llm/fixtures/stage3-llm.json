@@ -1,0 +1,29 @@
+{
+  "scaleRowTotals": [
+    { "scaleValueId": "lt25", "total": { "value": 200784, "status": "modeled", "sourceNote": "Sum across the 8 selected industries' <25 columns from the Industry × Employee Size matrix." } },
+    { "scaleValueId": "b25_49", "total": { "value": 6996, "status": "modeled" } },
+    { "scaleValueId": "b50_199", "total": { "value": 5391, "status": "modeled" } },
+    { "scaleValueId": "b200_1999", "total": { "value": 1389, "status": "modeled" } },
+    { "scaleValueId": "b2000plus", "total": { "value": 87, "status": "modeled" } }
+  ],
+  "profileColTotals": [
+    { "profileValueId": "prof_services", "total": { "value": 45000, "status": "sourced", "sourceUrl": "https://tablebuilder.singstat.gov.sg/table/TS/M601481", "sourceNote": "SingStat services industry detail." } },
+    { "profileValueId": "finance_insurance", "total": { "value": 11012, "status": "sourced", "sourceUrl": "https://tablebuilder.singstat.gov.sg/table/TS/M601481" } },
+    { "profileValueId": "infocomm", "total": { "value": 24872, "status": "sourced", "sourceUrl": "https://tablebuilder.singstat.gov.sg/table/TS/M601481" } },
+    { "profileValueId": "real_estate", "total": { "value": 9863, "status": "sourced", "sourceUrl": "https://tablebuilder.singstat.gov.sg/table/TS/M601481" } },
+    { "profileValueId": "wholesale_trade", "total": { "value": 57715, "status": "sourced", "sourceUrl": "https://tablebuilder.singstat.gov.sg/table/TS/M601481" } },
+    { "profileValueId": "education", "total": { "value": 6200, "status": "sourced", "sourceUrl": "https://tablebuilder.singstat.gov.sg/table/TS/M601481", "sourceNote": "Education only — Public Administration is excluded from this source." } },
+    { "profileValueId": "admin_support", "total": { "value": 22831, "status": "sourced", "sourceUrl": "https://tablebuilder.singstat.gov.sg/table/TS/M601481" } },
+    { "profileValueId": "retail_trade", "total": { "value": 37154, "status": "sourced", "sourceUrl": "https://tablebuilder.singstat.gov.sg/table/TS/M601481" } }
+  ],
+  "skewNotes": [
+    { "profileValueId": "prof_services", "note": "Skews toward 50–199 and 200–1,999 relative to most other industries — knowledge-work firms concentrate in mid-size bands." },
+    { "profileValueId": "wholesale_trade", "note": "Heavily skewed toward <25 — large number of small trading firms." },
+    { "profileValueId": "education", "note": "Skews toward larger bands (200–1,999, 2,000+) relative to its total size — schools and institutions are larger single accounts." },
+    { "profileValueId": "retail_trade", "note": "Skews toward <25 — many small independent retailers alongside a few large chains." }
+  ],
+  "reconciliationNotes": [
+    "Row/column totals cover only the 8 selected industries, not the full 14-industry Singapore economy — do not compare directly to the top-down 358.8k enterprise total.",
+    "Interior cells are modeled (IPF), not observed — treat as directional, not exact account counts."
+  ]
+}

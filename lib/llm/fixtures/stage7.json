@@ -1,0 +1,33 @@
+{
+  "chartData": [
+    { "scaleValueId": "lt25", "label": "<25", "currentPick": 0, "other": 135080 },
+    { "scaleValueId": "b25_49", "label": "25–49", "currentPick": 0, "other": 40330 },
+    { "scaleValueId": "b50_199", "label": "50–199", "currentPick": 77000, "other": 0 },
+    { "scaleValueId": "b200_1999", "label": "200–1,999", "currentPick": 0, "other": 45690 },
+    { "scaleValueId": "b2000plus", "label": "2,000+", "currentPick": 0, "other": 76875 }
+  ],
+  "topPick": {
+    "label": "Professional Services × 50–199 × Core Corporate (S$2,000–S$2,999)",
+    "rationale": [
+      "1,135 modeled accounts — the largest modeled 50–199 pool among the high-laptop-intensity target hypotheses.",
+      "High laptop intensity: predominantly knowledge-work roles rather than a frontline-heavy workforce.",
+      "Dominant bulk hypothesis is mainstream business computing — the Core Corporate S$2,000–S$2,999 cluster is the primary battlefield.",
+      "Premium Mobile (S$3,000–S$3,999) is a secondary role-based opportunity inside the same accounts, not the whole fleet.",
+      "The < S$2,000 price-led fleet is a negative/tactical filter — if the real standard fleet is mainly sub-S$2,000, this target falls."
+    ]
+  },
+  "rankedTable": [
+    { "rank": 1, "label": "Professional Services × 50–199 × Core Corporate", "accountPool": 1135, "whyItRises": "Best current bulk intersection: high laptop intensity + meaningful pool + mainstream business need + relevant product fit.", "mainRisk": "We have not proven the actual paid price or units per refresh.", "status": "Validate first" },
+    { "rank": 2, "label": "Finance & Insurance × 50–199 × Core Corporate", "accountPool": 567, "whyItRises": "High laptop intensity and plausible corporate fleet fit.", "mainRisk": "Enterprise security/manageability/support readiness could block entry.", "status": "Strong — readiness TBC" },
+    { "rank": 3, "label": "Information & Communications × 50–199 × Core Corporate", "accountPool": 923, "whyItRises": "Large laptop-heavy pool; general business roles can fit the product.", "mainRisk": "GPU/workstation-dependent technical users may reduce addressable demand.", "status": "Validate / filter" },
+    { "rank": 4, "label": "Real Estate × 50–199 × Premium Mobile", "accountPool": 197, "whyItRises": "Smaller pool but a distinctive mobility story.", "mainRisk": "Premium willingness-to-pay and premium-user count are unproven.", "status": "Validate niche" },
+    { "rank": 5, "label": "Professional Services × 50–199 × Premium Mobile", "accountPool": 1135, "whyItRises": "Strong secondary role-based opportunity within the same target accounts.", "mainRisk": "Subset only — do not treat all 1,135 accounts as premium buyers.", "status": "Validate with #1" }
+  ],
+  "whatWouldChangeThisAnswer": [
+    "Current #1 falls if the actual standard fleet in Professional Services × 50–199 is mainly sub-S$2,000 and price-led.",
+    "Current #1 strengthens if the normal standard fleet is around S$2,000–S$2,999 and refreshes in meaningful batches.",
+    "Premium Mobile rises if firms have a visible mobile/senior-user tier around S$3,000–S$3,999.",
+    "Finance & Insurance rises if the brand clears enterprise security/manageability/warranty requirements.",
+    "Information & Communications falls if a large share of relevant users needs NVIDIA/CUDA/workstation-class graphics."
+  ]
+}
