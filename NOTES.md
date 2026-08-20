@@ -60,3 +60,54 @@ surface it in the UI.
   calls (`research` vs `structure`) in `stage_runs` — directly useful for
   the "why is this stage slow" question from today, without needing to dig
   through Vercel runtime logs each time.
+
+## 3. Stage 2's TAM formula is hardcoded to a durable-goods shape
+
+**Surfaced by:** testing a second real category (Marketo — marketing
+automation software) alongside VAIO. The dimension *labels* generalize fine
+(Stage 1's prompt already says "don't assume industry/employee-size, pick
+whatever fits the category" — that part works). The bug is one level deeper:
+Stage 2's schema (`lib/schema/stage2-tam.ts`, `BottomUpRow`) hardcodes every
+category through
+
+```
+accounts × avgUnitsPerAccount × penetration ÷ cycleYears
+```
+
+which is VAIO's laptop-replacement math with the field names kept generic,
+not a genuinely category-agnostic formula. A subscription product like
+Marketo doesn't have a "replacement cycle in years" — it renews or churns,
+it doesn't wear out and get replaced. Forcing it through this schema means
+the model either produces nonsense or fakes a plausible-looking "cycle" to
+satisfy the schema. (Stage 5's pricing/fit-filter is *not* affected — it's
+already fully generic, no hardcoded concept baked into its schema, just
+whatever `fitFilterDimension` Stage 1 picked.)
+
+**Fix:** apply the same "fixed options, mixed and matched by product type"
+idea already used for dimensions to the TAM formula itself — a small fixed
+library of TAM *shapes*, picked per category instead of one formula forced
+on everything:
+- **Replacement-cycle** (current/only option today) — `accounts × units/account
+  × penetration ÷ cycle years` — durable goods, hardware.
+- **Recurring-revenue** — `accounts × penetration × avg contract value` —
+  subscriptions, SaaS.
+- **Consumption** — `accounts × usage volume × unit price` — metered/usage-based.
+- **Project-based** — `accounts × deals/year × avg deal size` — services.
+
+Stage 1 would pick the shape alongside the dimensions it already picks
+(add a field to its output, e.g. `tamModelShape`); Stage 2's schema and
+`reconcile()` branch on it (likely a Zod discriminated union on
+`BottomUpRow`, keyed by shape). Everything downstream (stage 3 onward) is
+unaffected — they only ever consume dimension labels and the final
+`annualizedDemand` number, never Stage 2's internal fields, so this should
+be a contained change.
+
+Explicitly separate from — and a prerequisite for — the longer-term vision:
+letting someone shape the market view themselves via chat (since only the
+person running the analysis really knows what's meaningful for their
+category), picking and combining from a fixed library of dimensions/shapes
+rather than either a rigid schema or the model inventing something fresh
+each time. Not building that now; noting it so the TAM-shape fix above is
+designed compatibly with it — `dimensionPlan` is already its own editable
+payload field, so a future chat interface mainly needs to let someone
+override what Stage 1 already picks, not restructure the payload.
