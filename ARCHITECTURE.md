@@ -1,121 +1,173 @@
-# Architecture: what gets collected, transformed, and written out
+# Architecture: layers, not just steps
 
-Also published as a diagram: see the artifact link shared in chat (not linkable from
-Markdown — ask in the conversation if you need it again). This file is the
-versioned, GitHub-renderable equivalent.
+*Rev. 2.* Rev. 1 colored all seven business stages the same way and called that
+"data engineering." It wasn't — it was a flowchart of product steps. This version
+treats extract / transform / validate / load / serve as the actual structural
+axis, and the seven stages as what they are: one orchestration sequence running
+that same shape seven times, chained by state. Also published as an interactive
+diagram (link shared in chat).
 
-## 1. The pipeline as a DAG
+## 1. The canonical shape, run seven times
 
-Each stage reads the accumulated project payload, drafts its own piece, then merges
-its output back in for the next stage to read. Every stage also writes an audit-log
-row before touching the shared payload.
+Every stage — framing, TAM, segmentation, needs, pricing, shortlist, rollup —
+passes through the same six layers. What differs between them is only the
+content of the extract/transform calls. Orchestration is what chains them:
+stage N's Load output becomes stage N+1's Extract input by re-reading the
+shared payload — there's no message queue or event bus, it's a synchronous
+HTTP call per stage, with no automatic retry.
 
 ```mermaid
-flowchart LR
-    intake["intake form\ncategory · geo · brand"]:::source
+flowchart TD
+    trigger["manual UI click -> synchronous HTTP request\nno queue - no scheduler - no auto-retry"]:::control
+    extract["EXTRACT\nweb_search research call (+ intake form, stage 1 only)\nalso reads prior stages' payload fields"]:::source
+    transform_llm["TRANSFORM\nllm.structure() - no tools, forced schema"]:::llm
+    transform_code["TRANSFORM\ncode: ipf.ts / reconcile() - not the model"]:::deterministic
+    validate{{"VALIDATE\nZod.parse() - schema gate"}}:::gate
+    fail["fail -> throw, write error row, stop"]:::gapnode
+    runs[("stage_runs\nimmutable - append-only\none row per attempt")]:::sink
+    payload[("projects.payload\nmutable - last-write-wins\nconcurrent writes: unhandled")]:::sink
+    serve["SERVE\nBattlefield page reads projects.payload"]:::sink
 
-    s1["STAGE 1\nFraming & Dimensions"]:::llm
-    s2["STAGE 2\nTAM"]:::llm
-    s3["STAGE 3\nSegment Matrix\n+ ipf.ts (code, not LLM)"]:::llm
-    s4["STAGE 4\nNeeds & Fit"]:::llm
-    s5["STAGE 5\nPricing Filter"]:::llm
-    s6["STAGE 6\nShortlist"]:::llm
-    s7["STAGE 7\nRollup"]:::llm
+    trigger --> extract --> transform_llm --> transform_code --> validate
+    validate -- pass --> runs
+    validate -- pass --> payload
+    validate -- fail --> fail
+    payload --> serve
 
-    pg[("Postgres\nprojects.payload (current state)\n+ stage_runs (append-only log)")]:::sink
-    bf["Battlefield page"]:::sink
+    subgraph orchestration ["ORCHESTRATION - 7 iterations, chained by state"]
+        direction TB
+        s1["S1 - Framing & Dimensions"]:::control
+        s2["S2 - TAM"]:::control
+        s3["S3 - Segment Matrix"]:::control
+        s4["S4 - Needs & Fit"]:::control
+        s5["S5 - Pricing Filter"]:::control
+        s6["S6 - Shortlist"]:::control
+        s7["S7 - Rollup"]:::control
+        s1 --> s2 --> s3 --> s4 --> s5 --> s6 --> s7
+    end
 
-    intake --> s1 --> s2 --> s3 --> s4 --> s5 --> s6 --> s7
-    s1 -.merge.-> pg
-    s2 -.merge.-> pg
-    s3 -.merge.-> pg
-    s4 -.merge.-> pg
-    s5 -.merge.-> pg
-    s6 -.merge.-> pg
-    s7 -.merge.-> pg
-    s7 --> bf
+    orchestration -. "each iteration enters at TRIGGER" .-> trigger
+    payload -. "stage N's Load feeds stage N+1's Extract" .-> orchestration
 
+    classDef control fill:#e6e9f0,stroke:#47536b,color:#14181f
     classDef source fill:#e8effc,stroke:#2d6cdf,color:#14181f
     classDef llm fill:#fbf1de,stroke:#a8721c,color:#14181f
+    classDef deterministic fill:#e7f4ec,stroke:#2f7a52,color:#14181f
+    classDef gate fill:#e7f4ec,stroke:#2f7a52,color:#14181f
     classDef sink fill:#f1ecfa,stroke:#6a49aa,color:#14181f
+    classDef gapnode fill:#fbeae8,stroke:#b03d31,color:#14181f
 ```
 
-Every arrow between stages is really `ProjectPayload` passed forward — stage N's
-`buildInput()` reads the fields the stages before it wrote. Stage 3 is the one
-exception to "AI drafts, code just moves data": its interior matrix cells are
-filled by a deterministic function, not the model. Stages currently run one
-"Generate" click at a time, left to right — see Gap #1 below.
+The one visual exception to "same shape every time": stage 3 adds a second
+deterministic transform (`ipf.ts`, the matrix-fill), and stages that don't need
+grounding (6, 7) skip the Extract layer's web-search sub-step — they transform
+straight from payload state.
 
-## 2. Anatomy of one stage
+## 2. Anatomy of one stage, with the gates made explicit
 
-Zooming into Stage 2 (TAM) as a representative example — the actual shape of
-every web-search-grounded stage (1 through 6). Two sequential Anthropic calls,
-not one agent looping freely: a research pass, then a structuring pass, kept
-separate because mixing a tool-using turn with a forced structured final answer
-isn't a documented-safe combination.
+Same TAM example as rev. 1, corrected: schema validation is now its own gate
+rather than a caption, and the two storage nodes are labeled with their actual
+consistency properties instead of just "where it's saved."
 
 ```mermaid
 flowchart TD
     upstream["stage1.dimensionPlan"]:::source
     input["Stage2Input"]:::neutral
-    research["llm.research()\nAnthropic + web_search — live internet"]:::source
+    research["llm.research()  [EXTRACT]\nAnthropic + web_search — live internet"]:::source
     found["research findings"]:::neutral
-    discarded["discarded — Gap #2\nnever written anywhere"]:::gap
-    structure["llm.structure()\nno tools — forced schema: Stage2LlmOutput"]:::llm
-    reconcile["reconcile (plain code, not LLM)\nannualizedDemand per row · delta vs top-down"]:::deterministic
-    output["Stage2Output (Zod-validated)"]:::neutral
-    payload[("projects.payload\ncurrent-state JSON, overwritten")]:::sink
-    run[("stage_runs row\ninput, output, model, status")]:::sink
+    discarded["discarded — Gap #2\nnever written anywhere"]:::gapnode
+    structure["llm.structure()  [TRANSFORM]\nno tools — forced schema: Stage2LlmOutput"]:::llm
+    gate1{{"Zod.parse()"}}:::gate
+    reconcile["reconcile()  [TRANSFORM — plain code]\nannualizedDemand per row · delta vs top-down"]:::deterministic
+    gate2{{"Zod.parse()"}}:::gate
+    runs[("stage_runs row\nimmutable — append-only, one row/attempt")]:::sink
+    payload[("projects.payload\nmutable — last-write-wins\nconcurrent writes: unhandled")]:::sink
 
     upstream -- "buildInput()" --> input --> research
     research -- "research.text + sources[]" --> found
     found -.-> discarded
-    found --> structure --> reconcile --> output
-    output -- "merge()" --> payload
-    output -- "merge()" --> run
+    found --> structure --> gate1 --> reconcile --> gate2
+    gate2 -- "merge()" --> runs
+    gate2 -- "merge()" --> payload
 
     classDef source fill:#e8effc,stroke:#2d6cdf,color:#14181f
     classDef llm fill:#fbf1de,stroke:#a8721c,color:#14181f
     classDef deterministic fill:#e7f4ec,stroke:#2f7a52,color:#14181f
+    classDef gate fill:#e7f4ec,stroke:#2f7a52,color:#14181f
     classDef sink fill:#f1ecfa,stroke:#6a49aa,color:#14181f
-    classDef gap fill:#fbeae8,stroke:#b03d31,color:#14181f,stroke-dasharray: 3 3
+    classDef gapnode fill:#fbeae8,stroke:#b03d31,color:#14181f,stroke-dasharray: 3 3
     classDef neutral fill:#eef0f4,stroke:#d8dce3,color:#14181f
 ```
 
-Every field written into `Stage2Output` is a `sourcedValue` — a number or claim
-tagged `sourced`, `modeled`, or `assumed`, plus an optional URL — so the payload
-always carries its own evidence trail, not just a final figure.
+Every field written into `Stage2Output` is also a `sourcedValue` — tagged
+`sourced`, `modeled`, or `assumed`, plus an optional URL — a data-quality
+dimension orthogonal to the schema-shape validation the two gates above
+enforce.
 
-## 3. Collect / Transform / Output, in one dictionary
+## 3. Change detection: how a stage knows it's stale
 
-**Collect** — what's ingested
-- `intake` form — category, geography, brand, description (seeds stage 1)
+The one mechanism in this system that's genuinely a data-engineering pattern in
+its own right — content-hash-based staleness detection, the same idea behind
+CDC watermarking or dbt's state comparison, just not wired to auto-recompute yet.
+
+```mermaid
+flowchart LR
+    payload["current payload\nbuildInput(payload)"]:::neutral
+    hash["hashInput()"]:::deterministic
+    inputHash["inputHash\n(this instant)"]:::neutral
+    stored[("stageMeta[id].generatedFromInputHash\nstored from the last successful run")]:::sink
+    compare{{"equal?"}}:::control
+    fresh["fresh — no badge"]:::deterministic
+    stale["stale badge shown — not auto-rerun"]:::gapnode
+
+    payload --> hash --> inputHash --> compare
+    stored --> compare
+    compare -- yes --> fresh
+    compare -- no --> stale
+
+    classDef neutral fill:#eef0f4,stroke:#d8dce3,color:#14181f
+    classDef deterministic fill:#e7f4ec,stroke:#2f7a52,color:#14181f
+    classDef sink fill:#f1ecfa,stroke:#6a49aa,color:#14181f
+    classDef control fill:#e6e9f0,stroke:#47536b,color:#14181f
+    classDef gapnode fill:#fbeae8,stroke:#b03d31,color:#14181f
+```
+
+This is a real, deliberate incremental-recompute mechanism — but the last step
+is manual today: a stale badge tells the user something upstream changed, it
+doesn't trigger recomputation itself. That's part of Gap #1.
+
+## 4. Collect / Transform / Output, in one dictionary
+
+**Extract** — what's ingested
+- `intake` form — category, geography, brand, description (stage 1 only)
 - `llm.research()` — live web search per grounded stage (1–6)
-- upstream `ProjectPayload` fields — each stage's `buildInput()`
+- upstream `ProjectPayload` fields — every stage's `buildInput()`
 
-**Transform** — how it's processed
+**Transform / Validate** — how it's processed
 - `llm.structure()` — forces findings into a Zod schema, no tools
-- `ipf.ts` — deterministic matrix fill (stage 3 only, not the model)
-- `merge()` — folds each stage's output back into the payload
+- `ipf.ts` / `reconcile()` — deterministic code, not the model
+- `Zod.parse()` — schema gate, twice per grounded stage
 - `sourcedValue` tagging — sourced / modeled / assumed on every fact
+- `hashInput()` — content hash feeding staleness detection
 
-**Output** — where it lands
-- `money_mountain.projects.payload` — current state, Postgres jsonb
-- `money_mountain.stage_runs` — append-only attempt log
-- Battlefield page — bar chart, top pick, ranked table, the user-facing sink
+**Load / Serve** — where it lands
+- `money_mountain.stage_runs` — immutable, append-only, one row/attempt
+- `money_mountain.projects.payload` — mutable, last-write-wins, concurrent writes unhandled
+- Battlefield page — bar chart, top pick, ranked table, the user-facing consumer
 
 ## Known gaps
 
 See `NOTES.md` for full detail. Summary:
 
-1. **No auto-chain** — stages run one "Generate" click at a time. Deliberate for
-   the MVP (let us debug the DB/framework/timeout issues one stage at a time),
-   but the end state is one input running all 7 stages without manual clicks
-   in between.
+1. **No auto-chain** — orchestration is a manual click per stage, and staleness
+   detection (§3) surfaces a badge but doesn't trigger recomputation.
+   Deliberate for the MVP (let us debug the DB/framework/timeout issues one
+   stage at a time), but the end state is one input running all 7 iterations
+   without manual clicks in between.
 2. **The research pass is invisible** — `research.text` and its sources feed
    `structure()` and are then discarded, never written to `stage_runs`, never
-   shown in the UI. When a stage's output looks wrong, there's currently no way
-   to see what it actually searched for or found.
+   shown in the UI. Marked directly on diagram §2 above.
 
 ---
-*Reflects the shipped pipeline after the first live Anthropic run, 2026-08-20.*
+*Rev. 2, 2026-08-20 — revised after self-critique against actual data-engineering
+conventions. Reflects the shipped pipeline after the first live Anthropic run.*
