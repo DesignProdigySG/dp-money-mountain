@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { StageId } from "@/lib/schema/payload";
 import { runStage, StageDependencyError } from "@/lib/pipeline/stage-registry";
+export const maxDuration = 300;
 
 export async function POST(
   _req: NextRequest,
