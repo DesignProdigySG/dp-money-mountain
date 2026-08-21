@@ -49,13 +49,25 @@ The research+structure split (rather than one call doing both) hasn't been valid
 
 ### Debug a live run stage-by-stage
 
+Full run, new project, all 7 stages:
+
 ```bash
 npm run pipeline:debug -- --category="..." --geography="..." --brand="..." [--product-description="..."] [--name="..."]
 ```
 
-Runs the full 7-stage pipeline against **live** Anthropic calls (refuses to run in mock mode — mock always returns the same canned VAIO fixture regardless of input, so it can't validate a new category) and prints each stage's research findings, source URLs, and structured JSON output to the terminal as it happens. Use this instead of clicking "Generate" one stage at a time in the browser when you want to see *why* the model concluded what it did, not just the final battlefield chart. Pipe to `tee` for a saved transcript: `npm run pipeline:debug -- ... | tee debug-runs/run.log`.
+One stage at a time, so you only spend on what you've actually reviewed — pass `--stage=stageN` to run just one stage, then `--project=<id>` (printed at the end of each run) to resume that project for the next stage:
 
-**Cost/time callout:** 5 of 7 stages make two live Anthropic calls each, stages 6–7 make one each — **12 live API calls per full run**, plausibly several minutes end-to-end, real spend every time it's run. Not something to loop on casually.
+```bash
+npm run pipeline:debug -- --category="..." --geography="..." --brand="..." --stage=stage1
+# review the output, then:
+npm run pipeline:debug -- --project=<id> --stage=stage2
+npm run pipeline:debug -- --project=<id> --stage=stage3
+# ...and so on
+```
+
+Either way, runs against **live** Anthropic calls only (refuses to run in mock mode — mock always returns the same canned VAIO fixture regardless of input, so it can't validate a new category) and prints each stage's research findings, source URLs, and structured JSON output to the terminal as it happens. Use this instead of clicking "Generate" one stage at a time in the browser when you want to see *why* the model concluded what it did, not just the final battlefield chart. Pipe to `tee` for a saved transcript: `npm run pipeline:debug -- ... | tee debug-runs/run.log`.
+
+**Cost/time callout:** 5 of 7 stages make two live Anthropic calls each, stages 6–7 make one each — up to **12 live API calls for a full run**, 1–2 for a single `--stage`. A full run is plausibly several minutes end-to-end; real spend every time either way.
 
 ### Seed the VAIO example
 
