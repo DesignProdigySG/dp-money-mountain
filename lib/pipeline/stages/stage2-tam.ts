@@ -2,6 +2,7 @@ import type { StageDefinition } from "../types";
 import { Stage2Input, Stage2LlmOutput, Stage2Output, BottomUpRowComputed } from "../../schema/stage2-tam";
 import { METHODOLOGY_PREAMBLE } from "../prompts";
 import type { ProjectPayload } from "../../schema/payload";
+import { lookupAccounts, writeBackAccounts, type AccountsLookupResult } from "../reference-data";
 
 export const stage2Tam: StageDefinition<Stage2Input, Stage2Output> = {
   id: "stage2",
@@ -17,12 +18,19 @@ export const stage2Tam: StageDefinition<Stage2Input, Stage2Output> = {
       scaleDimension: {
         name: payload.stage1.dimensionPlan.scaleDimension.name,
         values: payload.stage1.dimensionPlan.scaleDimension.values.map((v) => ({ id: v.id, label: v.label })),
+        canonicalKey: payload.stage1.dimensionPlan.scaleDimension.canonicalKey,
       },
     });
   },
   async run(input, llm) {
     const system = METHODOLOGY_PREAMBLE;
-    const user = `Category: ${input.category}
+
+    let cacheResult: AccountsLookupResult = { hit: false, reason: "not-declared" };
+    if (llm.kind !== "mock" && input.scaleDimension.canonicalKey) {
+      cacheResult = await lookupAccounts(input.scaleDimension.canonicalKey, input.scaleDimension.values);
+    }
+
+    let user = `Category: ${input.category}
 Geography: ${input.geography}
 Commercial question: ${input.commercialQuestion}
 Scale dimension "${input.scaleDimension.name}" values: ${input.scaleDimension.values
@@ -37,6 +45,16 @@ equivalent unit count), avg units-per-account, penetration (0-1), and
 replacement/purchase cycle in years. Do not compute annualizedDemand
 yourself — just supply the four inputs per row, sourced/modeled/assumed.`;
 
+    if (cacheResult.hit) {
+      user += `\n\nThe following accounts counts for this scale dimension are
+already known from a verified reference source and MUST be used exactly as
+given — do not re-research or alter them, just echo them back with
+status "sourced":
+${input.scaleDimension.values
+  .map((v) => `- ${v.label}: ${cacheResult.hit ? cacheResult.accounts[v.id]?.value : undefined}`)
+  .join("\n")}`;
+    }
+
     const research = await llm.research({ system, user });
     const llmOutput = await llm.structure({
       system,
@@ -46,11 +64,27 @@ yourself — just supply the four inputs per row, sourced/modeled/assumed.`;
     });
 
     const rows: BottomUpRowComputed[] = llmOutput.bottomUpRows.map((row) => {
-      const employees = row.accounts.value * row.avgUnitsPerAccount.value;
+      const accounts = cacheResult.hit ? (cacheResult.accounts[row.scaleValueId] ?? row.accounts) : row.accounts;
+      const employees = accounts.value * row.avgUnitsPerAccount.value;
       const installed = employees * row.penetration.value;
       const annualizedDemand = row.cycleYears.value > 0 ? installed / row.cycleYears.value : 0;
-      return { ...row, annualizedDemand };
+      return { ...row, accounts, annualizedDemand };
     });
+
+    if (
+      llm.kind !== "mock" &&
+      input.scaleDimension.canonicalKey &&
+      !cacheResult.hit &&
+      (cacheResult.reason === "no-such-key" || cacheResult.reason === "stale")
+    ) {
+      await writeBackAccounts({
+        canonicalKey: input.scaleDimension.canonicalKey,
+        geography: input.geography,
+        dimensionName: input.scaleDimension.name,
+        bandValues: input.scaleDimension.values,
+        accounts: Object.fromEntries(rows.map((r) => [r.scaleValueId, r.accounts])),
+      });
+    }
     const totalAnnualizedDemand = rows.reduce((sum, r) => sum + r.annualizedDemand, 0);
     const deltaVsTopDown = totalAnnualizedDemand - llmOutput.topDown.benchmark.value;
     const deltaPct = llmOutput.topDown.benchmark.value !== 0 ? deltaVsTopDown / llmOutput.topDown.benchmark.value : 0;

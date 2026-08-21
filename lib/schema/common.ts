@@ -56,5 +56,11 @@ export const DimensionDef = z.object({
   description: z.string().optional(),
   values: z.array(DimensionValue).min(1),
   source: sourcedValue(z.string()).optional(),
+  /** Self-declaration that this dimension's values are copied verbatim from
+   * a known reference dataset (see lib/pipeline/reference-data.ts) — e.g. a
+   * geography's standard employee-size bands, a census-like fact that's the
+   * same regardless of category. Only Stage 2's scaleDimension acts on this
+   * today; other dimensions may carry it inertly. */
+  canonicalKey: z.string().optional(),
 });
 export type DimensionDef = z.infer<typeof DimensionDef>;

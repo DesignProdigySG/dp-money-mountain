@@ -20,4 +20,15 @@ best predicts the dominant buyer need, and whatever "fit filter" dimension
 and cannot win.
 
 Keep dimensions small and usable: at most 6 values for the scale dimension
-and 8 for the profile dimension.`;
+and 8 for the profile dimension.
+
+Some dimensions are census-like population facts, not category judgments —
+e.g. how many businesses of a given size exist in a geography is a fixed
+statistic, true regardless of what product category is being analyzed. When
+a scale dimension you would otherwise pick matches a known canonical
+reference exactly (same geography, same band structure), reuse it
+explicitly: set canonicalKey to its exact key and copy its values array in
+verbatim — same ids, same labels, no paraphrasing or adjusting band
+boundaries. If no canonical reference genuinely fits this category's scale
+dimension, proceed as before: invent one, live-researched, no canonicalKey.
+Never force-fit a category into a canonical shape that doesn't apply.`;

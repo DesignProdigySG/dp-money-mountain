@@ -20,6 +20,19 @@ export const projects = mm.table("projects", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const referenceDatasets = mm.table("reference_datasets", {
+  canonicalKey: text("canonical_key").primaryKey(),
+  geography: text("geography").notNull(),
+  dimensionName: text("dimension_name").notNull(),
+  description: text("description"),
+  bandValues: jsonb("band_values").notNull(),
+  accounts: jsonb("accounts").notNull(),
+  asOfDate: text("as_of_date"),
+  sourceNote: text("source_note"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const stageRuns = mm.table("stage_runs", {
   id: text("id").primaryKey(),
   projectId: text("project_id").notNull(),

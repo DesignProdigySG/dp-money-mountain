@@ -8,6 +8,7 @@ export const Stage2Input = z.object({
   scaleDimension: z.object({
     name: z.string(),
     values: z.array(z.object({ id: z.string(), label: z.string() })),
+    canonicalKey: z.string().optional(),
   }),
 });
 export type Stage2Input = z.infer<typeof Stage2Input>;

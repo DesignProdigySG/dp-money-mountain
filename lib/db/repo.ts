@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { desc, eq } from "drizzle-orm";
 import { db } from "./client";
-import { projects, stageRuns } from "./schema";
+import { projects, stageRuns, referenceDatasets } from "./schema";
 import {
   CURRENT_SCHEMA_VERSION,
   ProjectIntake,
@@ -9,6 +9,7 @@ import {
   StageId,
   emptyPayload,
 } from "../schema/payload";
+import { ReferenceDataset } from "../schema/reference-data";
 
 export interface ProjectSummary {
   id: string;
@@ -184,4 +185,72 @@ export async function listStageRuns(projectId: string, stageId?: StageId): Promi
 export async function latestStageRun(projectId: string, stageId: StageId): Promise<StageRunRecord | null> {
   const runs = await listStageRuns(projectId, stageId);
   return runs[0] ?? null;
+}
+
+function rowToReferenceDataset(row: typeof referenceDatasets.$inferSelect): ReferenceDataset {
+  const parsed = ReferenceDataset.safeParse({
+    canonicalKey: row.canonicalKey,
+    geography: row.geography,
+    dimensionName: row.dimensionName,
+    description: row.description ?? undefined,
+    bandValues: row.bandValues,
+    accounts: row.accounts,
+    asOfDate: row.asOfDate ?? undefined,
+    sourceNote: row.sourceNote ?? undefined,
+  });
+  if (!parsed.success) {
+    throw new Error(
+      `Reference dataset ${row.canonicalKey} failed schema validation: ${parsed.error.message}`,
+    );
+  }
+  return parsed.data;
+}
+
+export async function getReferenceDataset(canonicalKey: string): Promise<
+  (ReferenceDataset & { updatedAt: string }) | null
+> {
+  const rows = await db
+    .select()
+    .from(referenceDatasets)
+    .where(eq(referenceDatasets.canonicalKey, canonicalKey))
+    .limit(1);
+  if (rows.length === 0) return null;
+  const updatedAt =
+    rows[0].updatedAt instanceof Date ? rows[0].updatedAt.toISOString() : String(rows[0].updatedAt);
+  return { ...rowToReferenceDataset(rows[0]), updatedAt };
+}
+
+export async function listReferenceDatasets(): Promise<ReferenceDataset[]> {
+  const rows = await db.select().from(referenceDatasets);
+  return rows.map(rowToReferenceDataset);
+}
+
+export async function upsertReferenceDataset(dataset: ReferenceDataset): Promise<void> {
+  const validated = ReferenceDataset.parse(dataset);
+  await db
+    .insert(referenceDatasets)
+    .values({
+      canonicalKey: validated.canonicalKey,
+      geography: validated.geography,
+      dimensionName: validated.dimensionName,
+      description: validated.description ?? null,
+      bandValues: validated.bandValues,
+      accounts: validated.accounts,
+      asOfDate: validated.asOfDate ?? null,
+      sourceNote: validated.sourceNote ?? null,
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: referenceDatasets.canonicalKey,
+      set: {
+        geography: validated.geography,
+        dimensionName: validated.dimensionName,
+        description: validated.description ?? null,
+        bandValues: validated.bandValues,
+        accounts: validated.accounts,
+        asOfDate: validated.asOfDate ?? null,
+        sourceNote: validated.sourceNote ?? null,
+        updatedAt: new Date(),
+      },
+    });
 }
