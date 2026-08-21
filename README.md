@@ -14,6 +14,10 @@ The funnel this app replicates (based on VAIO's Enterprise Laptops × Singapore 
 
 Every number is tagged **sourced** / **modeled** / **assumed** with a source note — that's the trust mechanism, not decoration.
 
+## Current status
+
+Deployed and live on Vercel (`noc-1575's projects`), backed by Supabase Postgres. Two categories have been run end-to-end live (VAIO/laptops, Marketo/software). **Starting a new session on this project?** Read `DECISIONS.md` first (why things are the way they are, full commit history, and a flagged environment constraint you need to know immediately), then `NOTES.md` (open items) — both are faster than re-deriving context from the code.
+
 ## Running locally
 
 Storage is Postgres via Supabase (the app's tables live in a dedicated `money_mountain` schema, separate from any other app sharing that project). You need a `DATABASE_URL`:
