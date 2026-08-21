@@ -4,6 +4,7 @@ import { STAGE_IDS } from "../schema/payload";
 import { hashInput } from "./hash";
 import { getLlmClient } from "../llm/factory";
 import { getProject, updateProjectPayload, recordStageRun } from "../db/repo";
+import type { LlmClient } from "../llm/client";
 
 import { stage1Framing } from "./stages/stage1-framing";
 import { stage2Tam } from "./stages/stage2-tam";
@@ -40,7 +41,7 @@ export function isStageStale(payload: ProjectPayload, stageId: StageId): boolean
 
 export class StageDependencyError extends Error {}
 
-export async function runStage(projectId: string, stageId: StageId) {
+export async function runStage(projectId: string, stageId: StageId, options?: { client?: LlmClient }) {
   const stage = STAGES[stageId];
   const project = await getProject(projectId);
   if (!project) throw new Error(`Project ${projectId} not found`);
@@ -52,7 +53,9 @@ export async function runStage(projectId: string, stageId: StageId) {
     );
   }
   const inputHash = hashInput(input);
-  const { client, stubbed } = await getLlmClient();
+  const { client, stubbed } = options?.client
+    ? { client: options.client, stubbed: options.client.kind !== "anthropic" }
+    : await getLlmClient();
 
   let output: unknown;
   try {

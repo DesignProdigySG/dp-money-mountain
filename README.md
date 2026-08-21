@@ -38,7 +38,7 @@ Schema changes are applied directly against Supabase (via the Supabase MCP tools
 
 **No `ANTHROPIC_API_KEY` set (default):** every stage drafts from a hand-authored fixture (`lib/llm/fixtures/*.json`) built from the original VAIO/Singapore spreadsheet. The whole app — intake, all 7 stages, the battlefield chart — is fully demoable this way. Every stubbed stage shows a banner making this explicit, since mock mode returns the *same* VAIO example regardless of the category/geography/brand you typed in.
 
-**With `ANTHROPIC_API_KEY` set:** stages 1–6 call the live Anthropic API — a web-search research call followed by a structured-output call against that stage's schema — and draft content for your actual input. Copy `.env.example` to `.env.local` and set the key to try this.
+**With `ANTHROPIC_API_KEY` set:** stages 1–5 call the live Anthropic API — a web-search research call followed by a structured-output call against that stage's schema — and draft content for your actual input. Stages 6–7 are synthesis-only (one structured-output call each, no web search). Copy `.env.example` to `.env.local` and set the key to try this.
 
 ```bash
 cp .env.example .env.local
@@ -46,6 +46,16 @@ cp .env.example .env.local
 ```
 
 The research+structure split (rather than one call doing both) hasn't been validated against a live key yet — treat it as the first thing to check if live drafting misbehaves.
+
+### Debug a live run stage-by-stage
+
+```bash
+npm run pipeline:debug -- --category="..." --geography="..." --brand="..." [--product-description="..."] [--name="..."]
+```
+
+Runs the full 7-stage pipeline against **live** Anthropic calls (refuses to run in mock mode — mock always returns the same canned VAIO fixture regardless of input, so it can't validate a new category) and prints each stage's research findings, source URLs, and structured JSON output to the terminal as it happens. Use this instead of clicking "Generate" one stage at a time in the browser when you want to see *why* the model concluded what it did, not just the final battlefield chart. Pipe to `tee` for a saved transcript: `npm run pipeline:debug -- ... | tee debug-runs/run.log`.
+
+**Cost/time callout:** 5 of 7 stages make two live Anthropic calls each, stages 6–7 make one each — **12 live API calls per full run**, plausibly several minutes end-to-end, real spend every time it's run. Not something to loop on casually.
 
 ### Seed the VAIO example
 

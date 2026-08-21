@@ -10,6 +10,7 @@
     "test": "vitest run",
     "seed:vaio": "tsx scripts/seed-vaio.ts",
     "seed:reference-data": "tsx scripts/seed-reference-data.ts",
+    "pipeline:debug": "tsx scripts/run-pipeline-debug.ts",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
